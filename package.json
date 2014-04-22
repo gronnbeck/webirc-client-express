@@ -1,0 +1,14 @@
+{
+	"name": "webirc-client-express",
+	"version": "0.0.0",
+	"description": "Simple web-based irc-client deployed using express",
+	"main": "app.js",
+	"author": "Ken Grønnbeck <kengroenn@gmail.com>",
+	"license": "MIT",
+	"scripts": {
+	},
+	"dependencies": {
+    "express": "3.x",
+    "node-getopt": "latest"
+	}
+}
