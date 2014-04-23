@@ -12,6 +12,8 @@ var express = require('express')
 , opt = getopt.parse(process.argv.slice(2))
 , port = opt.options.port || 3000
 
+app.use(express.json())
+
 api.bind(app)
 
 app.get('/app/config.js', function(req,res) {
