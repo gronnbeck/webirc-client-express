@@ -1,11 +1,18 @@
 var express = require('express')
-, app = express()
 , GetOpt = require('node-getopt')
+, app = express()
+, API = require('./api/api')
+, api = new API({
+  base: '/api'
+})
+
 , getopt = new GetOpt([
   ['p', 'port=']
 ]).bindHelp()
 , opt = getopt.parse(process.argv.slice(2))
 , port = opt.options.port || 3000
+
+api.bind(app)
 
 app.get('/app/config.js', function(req,res) {
   res.sendfile('config.js')

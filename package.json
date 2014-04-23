@@ -9,6 +9,9 @@
 	},
 	"dependencies": {
     "express": "3.x",
-    "node-getopt": "latest"
+    "nano": "latest",
+		"node-getopt": "latest",
+		"underscore": "latest",
+		"base64": "latest"
 	}
 }
