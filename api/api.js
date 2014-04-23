@@ -17,20 +17,43 @@ module.exports = function API(config) {
   return {
     bind: function(app) {
       var routes = {
-        userById: config.base + '/user/:id'
+        userById: config.base + '/user/:id',
+        registerUser: config.base + '/register/:id'
       }
-      app.get(routes.userById, function(req, res) {
+      , id = function(req) {
         var id = req.params.id
         , encoded = base64.encode(id)
+        return encoded
+      }
+
+      app.get(routes.userById, function(req, res) {
+        var encoded = id(req)
+
         db.get(encoded, function(err, body) {
           if (!err) {
             res.json(body)
           }
           else if (err.message === 'missing') {
-            res.json(500, { error: 'Could not find id ' + id })
+            res.json(500, { error: 'Could not find id ' + req.params.id })
           }
           else {
             res.json(500, { error: 'Unknown error occured' })
+          }
+        })
+      })
+
+      app.post(routes.registerUser, function(req, res) {
+        var encoded = id(req)
+        db.insert({}, encoded, function(err, body) {
+          if (!err) {
+            res.json({
+              success: true,
+              id: req.params.id
+            })
+          } else {
+            res.json(500, {
+              success: false
+            })
           }
         })
       })
