@@ -1,5 +1,6 @@
 var Nano = require('nano')
 , _ = require('underscore')
+, log = console.log
 , base64 = require('./base64')
 , defaults = {
   base: '',
@@ -16,6 +17,7 @@ module.exports = function API(config) {
   , db = nano.db.use(config.db.name)
   return {
     bind: function(app) {
+
       var routes = {
         userById: config.base + '/user/:id',
         registerUser: config.base + '/register/:id'
@@ -40,6 +42,52 @@ module.exports = function API(config) {
             res.json(500, { error: 'Unknown error occured' })
           }
         })
+      })
+
+      app.post(routes.userById, function(req, res) {
+        var enc = id(req)
+        var user = req.body
+        var valid = function(user) {
+          var empty = _.isEmpty(user)
+          return !empty
+        }
+        var insert = function(user) {
+          db.insert(user, enc, function(err, body) {
+            if (!err) {
+              res.json({
+                success: true,
+                user: user
+              })
+            } else {
+              var msg = 'An error occured on updating user ' + req.params.id
+              log(msg)
+              log(err)
+              res.json(500, {
+                success: false,
+                error: msg
+              })
+            }
+
+          })
+        }
+        if (!valid(user)) {
+          res.json(500, {
+            success: false,
+            error: 'Invalid user object'
+          })
+        }
+        else {
+          db.get(enc, function(err, body) {
+            if (!err) {
+              insert(user)
+            } else {
+              res.json(500, {
+                success: false,
+                error: 'Could not find user with id ' + req.params.id
+              })
+            }
+          })
+        }
       })
 
       app.post(routes.registerUser, function(req, res) {
